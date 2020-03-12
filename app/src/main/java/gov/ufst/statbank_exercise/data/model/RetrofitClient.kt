@@ -1,21 +1,20 @@
 package gov.ufst.statbank_exercise.data.model
 
+import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
 object RetrofitClient {
-    private var retrofit: Retrofit? = null
-    private const val BASE_URL = "https://api.statbank.dk/v1/data"
+    private const val BASE_URL = "https://api.statbank.dk/"
 
-    val retrofitInstance: Retrofit?
-        get() {
-            if (retrofit == null) {
-                retrofit = Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-            }
-            return retrofit
-        }
+    fun create(): ApiCalls {
+
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+            .build().create(ApiCalls::class.java)
+
+    }
+
 }

@@ -14,6 +14,7 @@ import com.anychart.chart.common.dataentry.DataEntry
 import com.anychart.chart.common.dataentry.ValueDataEntry
 import gov.ufst.statbank_exercise.R
 import gov.ufst.statbank_exercise.SharedViewModel
+import gov.ufst.statbank_exercise.data.model.TwinData
 import gov.ufst.statbank_exercise.databinding.MainFragmentBinding
 import kotlinx.android.synthetic.main.main_fragment.view.*
 
@@ -41,32 +42,38 @@ class MainFragment : Fragment() {
         activity?.let {
             sharedViewModel = ViewModelProvider(it).get(SharedViewModel::class.java)
         }
-//        viewModel.data.observe(this, Observer { event ->
-//            event?.getContentIfNotHandledOrReturnNull()?.let {
-//                createPieChart()
-////                binding.chart1.data = BarData(it)
-////                binding.chart1.data.notifyDataChanged()
-////                binding.chart1.notifyDataSetChanged()
-//            }
-//        })
+
+        viewModel.birthData.observe(viewLifecycleOwner, Observer { event ->
+            event?.getContentIfNotHandledOrReturnNull()?.let {
+                createPieChart(it)
+//                binding.chart1.data = BarData(it)
+//                binding.chart1.data.notifyDataChanged()
+//                binding.chart1.notifyDataSetChanged()
+            }
+        })
 
     }
 
     override fun onStart(){
         super.onStart()
-        //viewModel.getData()
-        createPieChart()
+        viewModel.getData()
+       // createPieChart()
 
     }
 
-    private fun createPieChart(){
+    private fun createPieChart(twinData: TwinData){
 
         val pie = AnyChart.pie()
 
         val data: MutableList<DataEntry> = ArrayList()
-        data.add(ValueDataEntry("John", 10000))
-        data.add(ValueDataEntry("Jake", 12000))
-        data.add(ValueDataEntry("Peter", 18000))
+
+        for(item in twinData.dataset.value){
+
+            data.add(ValueDataEntry("hello", item))
+        }
+//        data.add(ValueDataEntry("John", 10000))
+//        data.add(ValueDataEntry("Jake", 12000))
+//        data.add(ValueDataEntry("Peter", 18000))
 
         pie.data(data)
 
