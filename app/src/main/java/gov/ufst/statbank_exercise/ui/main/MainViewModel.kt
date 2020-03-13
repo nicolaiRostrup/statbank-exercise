@@ -3,6 +3,7 @@ package gov.ufst.statbank_exercise.ui.main
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.anychart.charts.Pie
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import gov.ufst.statbank_exercise.data.model.*
@@ -17,17 +18,21 @@ class MainViewModel : ViewModel() {
 
     val birthData = MutableLiveData<Event<TwinData>>()
 
+    val livePie = MutableLiveData<Pie>()
+
 
     fun getData() {
-        val liveData = MutableLiveData<TwinData>()
+
 
         client.getTwinData(getTwinDataRequest()).enqueue(object : Callback<TwinData> {
             override fun onResponse(call: Call<TwinData>, response: Response<TwinData>) {
                 if (response.isSuccessful) {
                     Log.i("server response: ", " successful ${response.body()}")
-                    liveData.value = response.body()
-                }
-                else{
+
+                    handleDataByEvent(response.body())
+
+
+                } else {
                     Log.i("server response: ", " unsuccessful ${response.body()}")
 
                 }
@@ -38,13 +43,20 @@ class MainViewModel : ViewModel() {
                 Log.e("server request error", "")
             }
         })
-        val twinData = liveData.value
-        if(twinData!= null) {
-            birthData.postValue(Event(twinData))
-            Log.i("posted value: ", twinData.toString())
-        }
+
 
     }
+
+    private fun handleDataByEvent(twinData: TwinData?){
+
+                    Log.i("posted value 1: ", twinData.toString())
+                    if (twinData != null) {
+                        birthData.postValue(Event(twinData))
+
+                    }
+
+    }
+
 
     private fun getTwinDataRequest(): DataRequest {
 
@@ -55,7 +67,7 @@ class MainViewModel : ViewModel() {
             code = "TID", placement = "Stub", values = listOf("1850", "1851")
         )
         val dataRequest = DataRequest(
-            lang = "en", table = "FOD8", format = "JSONSTAT", variables = listOf(foedType, tid )
+            lang = "en", table = "FOD8", format = "JSONSTAT", variables = listOf(foedType, tid)
 
         )
 
@@ -71,7 +83,6 @@ class MainViewModel : ViewModel() {
         return dataRequest
 
     }
-
 
 
 }

@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.anychart.AnyChart
-import com.anychart.AnyChartView
 import com.anychart.chart.common.dataentry.DataEntry
 import com.anychart.chart.common.dataentry.ValueDataEntry
 import gov.ufst.statbank_exercise.R
@@ -46,9 +45,7 @@ class MainFragment : Fragment() {
         viewModel.birthData.observe(viewLifecycleOwner, Observer { event ->
             event?.getContentIfNotHandledOrReturnNull()?.let {
                 createPieChart(it)
-//                binding.chart1.data = BarData(it)
-//                binding.chart1.data.notifyDataChanged()
-//                binding.chart1.notifyDataSetChanged()
+
             }
         })
 
@@ -57,7 +54,7 @@ class MainFragment : Fragment() {
     override fun onStart(){
         super.onStart()
         viewModel.getData()
-       // createPieChart()
+
 
     }
 
@@ -66,10 +63,18 @@ class MainFragment : Fragment() {
         val pie = AnyChart.pie()
 
         val data: MutableList<DataEntry> = ArrayList()
+//        val thisLabelMap = twinData.dataset.dimension.tid.category.indexList.apply {
+//            this.entries.associateBy({ it.value }) { it.key }
+//        }
 
-        for(item in twinData.dataset.value){
+        val thisLabelMap = twinData.dataset.dimension.tid.category.indexList
+        val reversedLabelMap = thisLabelMap.entries.associateBy({ it.value }) { it.key }
 
-            data.add(ValueDataEntry("hello", item))
+        for((index, value) in twinData.dataset.value.withIndex()){
+
+            val thisLabel: String? = reversedLabelMap[index] ?: ""
+
+            data.add(ValueDataEntry(thisLabel, value))
         }
 //        data.add(ValueDataEntry("John", 10000))
 //        data.add(ValueDataEntry("Jake", 12000))

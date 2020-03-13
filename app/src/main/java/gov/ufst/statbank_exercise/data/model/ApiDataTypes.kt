@@ -1,11 +1,6 @@
 package gov.ufst.statbank_exercise.data.model
 
 import com.google.gson.annotations.SerializedName
-import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-
 
 
 //data class MemberData(
@@ -34,7 +29,20 @@ data class TwinData(
 )
 
 data class DataSet(
+    @SerializedName("dimension") val dimension: Dimension,
     @SerializedName("value") val value: List<Int>
+)
+
+data class Dimension(
+    @SerializedName("Tid") val tid: Tid
+)
+
+data class Tid(
+    @SerializedName("category") val category: Category
+)
+
+data class Category(
+    @SerializedName("index") val indexList: Map<String, Int>
 )
 
 
