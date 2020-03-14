@@ -1,4 +1,4 @@
-package gov.ufst.statbank_exercise.ui.main
+package gov.ufst.statbank_exercise.ui.helpers
 
 
 open class Event<out T>(private val content: T) {

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <data>
+
+    <import type="android.view.View" />
+
+    <variable
+        name="viewModel"
+        type="gov.ufst.statbank_exercise.ui.main.SettingsViewModel" />
+
+  </data>
+
+  <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+      android:id="@+id/main"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      tools:context=".ui.main.SettingsFragment">
+
+    <TextView
+        android:id="@+id/result_birthtype"
+        android:layout_width="75dp"
+        android:layout_height="35dp"
+        android:background="@color/grey"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@id/seekbar_birthtype"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@{String.valueOf(viewModel.seekBarValueDeliveryType + 1) }"/>
+
+    <SeekBar
+        android:id="@+id/seekbar_birthtype"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="40dp"
+        android:max="3"
+        app:layout_constraintBottom_toTopOf="@id/description_birthtype"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+
+    <TextView
+        android:id="@+id/description_birthtype"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginBottom="15dp"
+        app:layout_constraintBottom_toTopOf="@id/result_year_from"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Singles, twins, triplets or quadruplets"/>
+
+    <TextView
+        android:id="@+id/result_year_from"
+        android:layout_width="75dp"
+        android:layout_height="35dp"
+        android:background="@color/grey"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@id/seekbar_year_from"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@{String.valueOf(viewModel.seekBarValueYearFrom + 1850) }"/>
+
+    <SeekBar
+        android:id="@+id/seekbar_year_from"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="40dp"
+        android:max="168"
+        app:layout_constraintBottom_toTopOf="@id/description_year_from"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+
+    <TextView
+        android:id="@+id/description_year_from"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginBottom="15dp"
+        app:layout_constraintBottom_toTopOf="@id/result_year_until"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="From this year"/>
+
+    <TextView
+        android:id="@+id/result_year_until"
+        android:layout_width="75dp"
+        android:layout_height="35dp"
+        android:background="@color/grey"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@id/seekbar_year_until"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@{String.valueOf(viewModel.seekBarValueYearUntil + 1850) }"/>
+
+    <SeekBar
+        android:id="@+id/seekbar_year_until"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="40dp"
+        android:max="168"
+        app:layout_constraintBottom_toTopOf="@id/description_year_until"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+
+    <TextView
+        android:id="@+id/description_year_until"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Until this year"/>
+
+
+
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
