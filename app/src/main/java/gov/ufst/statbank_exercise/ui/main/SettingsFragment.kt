@@ -64,27 +64,41 @@ class SettingsFragment : Fragment() {
         seekBarBirth.progress = sharedViewModel.currentUserRequest.deliveryType.toInt()
         seekBarFrom.progress = sharedViewModel.currentUserRequest.fromYear
         seekBarUntil.progress = sharedViewModel.currentUserRequest.untilYear
+
+        viewModel.seekBarValueYearFrom.postValue(sharedViewModel.currentUserRequest.fromYear)
+        viewModel.seekBarValueYearUntil.postValue(sharedViewModel.currentUserRequest.untilYear)
     }
 
     private fun setUpSeekBar(seekBarType: SeekBarType, thisSeekBar: SeekBar) {
 
-
         thisSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             var progressChangedValue = 0
 
-            override fun onProgressChanged(seekBar: SeekBar,
-                                           progress: Int,
-                                           fromUser: Boolean) {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 progressChangedValue = progress
 
                 if (seekBarType == SeekBarType.DELIVERY) {
                     viewModel.seekBarValueDeliveryType.postValue(progress)
                 }
                 if (seekBarType == SeekBarType.FROM_YEAR) {
-                    viewModel.seekBarValueYearFrom.postValue(progress)
+                    val untilValue = viewModel.seekBarValueYearUntil.value
+                    if(untilValue != null && progress > untilValue){
+                        thisSeekBar.progress = untilValue
+                    }
+                    else{
+                        viewModel.seekBarValueYearFrom.postValue(progress)
+                    }
+
                 }
                 if (seekBarType == SeekBarType.UNTIL_YEAR) {
-                    viewModel.seekBarValueYearUntil.postValue(progress)
+                    val fromValue = viewModel.seekBarValueYearFrom.value
+                    if(fromValue != null && progress < fromValue){
+                        thisSeekBar.progress = fromValue
+                    }
+                    else{
+                        viewModel.seekBarValueYearUntil.postValue(progress)
+                    }
+
                 }
 
             }

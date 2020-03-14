@@ -8,7 +8,5 @@ class SharedViewModel: ViewModel(){
 
     lateinit var currentUserRequest: UserRequest
 
-    var isRequestOkay = false
-
 
 }

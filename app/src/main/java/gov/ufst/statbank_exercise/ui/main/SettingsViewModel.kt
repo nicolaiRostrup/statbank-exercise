@@ -11,23 +11,11 @@ import gov.ufst.statbank_exercise.ui.helpers.Event
 
 class SettingsViewModel : ViewModel(), Observable {
 
-
-
     val seekBarValueDeliveryType = MutableLiveData<Int>()
     val seekBarValueYearFrom = MutableLiveData<Int>()
     val seekBarValueYearUntil = MutableLiveData<Int>()
 
     lateinit var sharedViewModel: SharedViewModel
-
-//
-//    private fun handleDataByEvent(twinData: TwinData?) {
-//        if (twinData != null) {
-//            birthDataTwins.postValue(Event(twinData))
-//            serverInfoTwins.postValue(twinData)
-//        }
-//
-//    }
-
 
 
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {

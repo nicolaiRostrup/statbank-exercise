@@ -61,51 +61,80 @@ class ChartFragment(private val chartType: ChartType) : Fragment() {
 
         viewModel.serverDataReady.observe(viewLifecycleOwner, Observer { event ->
             event?.getContentIfNotHandledOrReturnNull()?.let {
-                createChart(it, chartType)
+                createChart(prepareData(it), chartType)
 
             }
         })
 
     }
 
-
-
     override fun onStart() {
         super.onStart()
-
         viewModel.getData(sharedViewModel.currentUserRequest)
-
 
     }
 
-    private fun createChart(twinData: TwinData, chartType: ChartType) {
-
-        val dataList: MutableList<DataEntry> = ArrayList()
-
+    private fun prepareData(twinData: TwinData): List<ServerDataObject>{
         val thisLabelMap = twinData.dataset.dimension.tid.category.indexList
         val reversedLabelMap = thisLabelMap.entries.associateBy({ it.value }) { it.key }
 
+        var serverDataList: MutableList<ServerDataObject> = ArrayList()
+
         for ((index, value) in twinData.dataset.value.withIndex()) {
+            val year = reversedLabelMap[index]
+            year?.let {
+                serverDataList.add(ServerDataObject(year = year, value = value))
+            }
 
-            val thisLabel: String? = reversedLabelMap[index] ?: ""
+        }
+        if (chartType == ChartType.PIE) {
+            serverDataList = reduceDataList(serverDataList)
+        }
+        return serverDataList
 
-            dataList.add(ValueDataEntry(thisLabel, value))
+    }
+
+    private fun reduceDataList(dataList: MutableList<ServerDataObject>): MutableList<ServerDataObject> {
+        val reduceFactor: Int = when (dataList.size) {
+            in 1..10 -> 2
+            in 11..50 -> 4
+            in 51..100 -> 12
+            in 101..200 -> 25
+            else -> 1
+        }
+        val resultList: MutableList<ServerDataObject> = ArrayList()
+
+        for (item in dataList.withIndex()) {
+            if (item.index % reduceFactor == 0) {
+                resultList.add(item.value)
+            }
+        }
+        return resultList
+
+    }
+
+    private fun createChart(serverDataList: List<ServerDataObject>, chartType: ChartType) {
+        val finalDataList: MutableList<DataEntry> = ArrayList()
+
+        for (item in serverDataList.withIndex()) {
+                finalDataList.add(ValueDataEntry(serverDataList[item.index].year,
+                                                 serverDataList[item.index].value))
         }
 
-        val chart = when(chartType) {
+        val chart = when (chartType) {
             ChartType.PIE -> {
                 AnyChart.pie().apply {
-                    this.data(dataList)
+                    this.data(finalDataList)
                 }
             }
             ChartType.LINE -> {
                 AnyChart.line().apply {
-                    this.data(dataList)
+                    this.data(finalDataList)
                 }
             }
             ChartType.MEKKO -> {
-                AnyChart.mekko().apply{
-                    this.data(dataList)
+                AnyChart.mekko().apply {
+                    this.data(finalDataList)
                 }
             }
 
@@ -115,29 +144,6 @@ class ChartFragment(private val chartType: ChartType) : Fragment() {
         chartView.setChart(chart)
 
     }
-
-//    private fun createLineChart(twinData: TwinData) {
-//
-//        val line = AnyChart.line()
-//
-//        val data: MutableList<DataEntry> = ArrayList()
-//
-//        val thisLabelMap = twinData.dataset.dimension.tid.category.indexList
-//        val reversedLabelMap = thisLabelMap.entries.associateBy({ it.value }) { it.key }
-//
-//        for ((index, value) in twinData.dataset.value.withIndex()) {
-//
-//            val thisLabel: String? = reversedLabelMap[index] ?: ""
-//
-//            data.add(ValueDataEntry(thisLabel, value))
-//        }
-//
-//        line.data(data)
-//
-//        val chart = binding.root.line_chart_view
-//        chart.setChart(line)
-//
-//    }
 
 
     companion object {
@@ -149,3 +155,8 @@ class ChartFragment(private val chartType: ChartType) : Fragment() {
         LINE, PIE, MEKKO
     }
 }
+
+data class ServerDataObject(
+    val year: String,
+    val value: Int
+)

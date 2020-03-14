@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.navigation_fragment.*
 class NavigationFragment : Fragment() {
 
     private lateinit var binding: NavigationFragmentBinding
-    private lateinit var viewModel: NavigationViewModel
     private lateinit var sharedViewModel: SharedViewModel
 
 
@@ -31,9 +30,6 @@ class NavigationFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProvider(this).get(NavigationViewModel::class.java)
-        binding.viewModel = viewModel
-
         activity?.let {
             sharedViewModel = ViewModelProvider(it).get(SharedViewModel::class.java)
         }
@@ -44,14 +40,13 @@ class NavigationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         pie_chart_button.setOnClickListener {
-            if (sharedViewModel.currentUserRequest != null) {
-                activity?.let {
-                    it.supportFragmentManager.beginTransaction()
-                        .replace(R.id.container,
-                                 ChartFragment.newInstance(ChartFragment.ChartType.PIE))
-                        .commitNow()
-                }
+            activity?.let {
+                it.supportFragmentManager.beginTransaction()
+                    .replace(R.id.container,
+                             ChartFragment.newInstance(ChartFragment.ChartType.PIE))
+                    .commitNow()
             }
+
         }
 
         line_chart_button.setOnClickListener {
@@ -73,7 +68,6 @@ class NavigationFragment : Fragment() {
             }
 
         }
-
 
     }
 

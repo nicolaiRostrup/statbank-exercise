@@ -4,12 +4,6 @@
 
   <data>
 
-    <import type="android.view.View" />
-
-    <variable
-        name="viewModel"
-        type="gov.ufst.statbank_exercise.ui.main.NavigationViewModel" />
-
   </data>
 
   <androidx.constraintlayout.widget.ConstraintLayout
