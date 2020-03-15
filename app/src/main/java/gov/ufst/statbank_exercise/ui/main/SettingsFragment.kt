@@ -8,27 +8,22 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import gov.ufst.statbank_exercise.R
-import gov.ufst.statbank_exercise.SharedViewModel
 import gov.ufst.statbank_exercise.databinding.SettingsFragmentBinding
-import gov.ufst.statbank_exercise.ui.helpers.DeliveryType
-import gov.ufst.statbank_exercise.ui.helpers.UserRequest
-import gov.ufst.statbank_exercise.ui.helpers.toDeliveryType
-import gov.ufst.statbank_exercise.ui.helpers.toInt
+import gov.ufst.statbank_exercise.ui.helpers.*
 import kotlinx.android.synthetic.main.settings_fragment.view.*
+import org.koin.android.viewmodel.ext.android.getViewModel
+import kotlinx.android.synthetic.main.settings_fragment.*
 
 
 class SettingsFragment : Fragment() {
 
     private lateinit var binding: SettingsFragmentBinding
     private lateinit var viewModel: SettingsViewModel
-    private lateinit var sharedViewModel: SharedViewModel
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-
 
         binding = DataBindingUtil.inflate(inflater, R.layout.settings_fragment, container, false)
         binding.lifecycleOwner = this
@@ -38,35 +33,26 @@ class SettingsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
+        viewModel = getViewModel()
         binding.viewModel = viewModel
-
-        activity?.let {
-            sharedViewModel = ViewModelProvider(it).get(SharedViewModel::class.java)
-
-        }
-        viewModel.sharedViewModel = sharedViewModel
-        sharedViewModel.currentUserRequest = UserRequest(DeliveryType.SINGLE, 0, 0)
 
     }
 
     override fun onStart() {
         super.onStart()
 
-        val seekBarBirth = binding.root.seekbar_birthtype
-        val seekBarFrom = binding.root.seekbar_year_from
-        val seekBarUntil = binding.root.seekbar_year_until
+        val userRequest = viewModel.userRequest
+        seekbar_birthtype.progress = userRequest.deliveryType.toInt()
+        seekbar_year_from.progress = userRequest.fromYear - DefaultSettings.minimumYear
+        seekbar_year_until.progress = userRequest.untilYear - DefaultSettings.minimumYear
+        result_birthtype.text = (userRequest.deliveryType.toInt() + 1).toString()
+        result_year_from.text = userRequest.fromYear.toString()
+        result_year_until.text = userRequest.untilYear.toString()
 
-        setUpSeekBar(SeekBarType.DELIVERY, seekBarBirth)
-        setUpSeekBar(SeekBarType.FROM_YEAR, seekBarFrom)
-        setUpSeekBar(SeekBarType.UNTIL_YEAR, seekBarUntil)
+        setUpSeekBar(SeekBarType.DELIVERY, seekbar_birthtype)
+        setUpSeekBar(SeekBarType.FROM_YEAR, seekbar_year_from)
+        setUpSeekBar(SeekBarType.UNTIL_YEAR, seekbar_year_until)
 
-        seekBarBirth.progress = sharedViewModel.currentUserRequest.deliveryType.toInt()
-        seekBarFrom.progress = sharedViewModel.currentUserRequest.fromYear
-        seekBarUntil.progress = sharedViewModel.currentUserRequest.untilYear
-
-        viewModel.seekBarValueYearFrom.postValue(sharedViewModel.currentUserRequest.fromYear)
-        viewModel.seekBarValueYearUntil.postValue(sharedViewModel.currentUserRequest.untilYear)
     }
 
     private fun setUpSeekBar(seekBarType: SeekBarType, thisSeekBar: SeekBar) {
@@ -78,29 +64,27 @@ class SettingsFragment : Fragment() {
                 progressChangedValue = progress
 
                 if (seekBarType == SeekBarType.DELIVERY) {
-                    viewModel.seekBarValueDeliveryType.postValue(progress)
+                    //result_birthtype.text = progressChangedValue.toString()
+                    result_birthtype.text = (progressChangedValue.toString().toInt() + 1).toString()
                 }
                 if (seekBarType == SeekBarType.FROM_YEAR) {
-                    val untilValue = viewModel.seekBarValueYearUntil.value
-                    if(untilValue != null && progress > untilValue){
-                        thisSeekBar.progress = untilValue
+                    if( progress > seekbar_year_until.progress){
+                        thisSeekBar.progress = seekbar_year_until.progress
+
                     }
                     else{
-                        viewModel.seekBarValueYearFrom.postValue(progress)
+                        result_year_from.text =  (progressChangedValue + DefaultSettings.minimumYear).toString()
                     }
 
                 }
                 if (seekBarType == SeekBarType.UNTIL_YEAR) {
-                    val fromValue = viewModel.seekBarValueYearFrom.value
-                    if(fromValue != null && progress < fromValue){
-                        thisSeekBar.progress = fromValue
+                    if( progress < seekbar_year_from.progress){
+                        thisSeekBar.progress = seekbar_year_from.progress
                     }
                     else{
-                        viewModel.seekBarValueYearUntil.postValue(progress)
+                        result_year_until.text = (progressChangedValue + DefaultSettings.minimumYear).toString()
                     }
-
                 }
-
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -108,22 +92,20 @@ class SettingsFragment : Fragment() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-
                 if (seekBarType == SeekBarType.DELIVERY) {
-                    sharedViewModel.currentUserRequest.deliveryType =
-                        progressChangedValue.toDeliveryType()
+                    viewModel.userRequest.deliveryType = result_birthtype.text.toString().toInt().toDeliveryType()
                 }
                 if (seekBarType == SeekBarType.FROM_YEAR) {
-                    sharedViewModel.currentUserRequest.fromYear =
-                        progressChangedValue
+                    viewModel.userRequest.fromYear = result_year_from.text.toString().toInt()
+
                 }
                 if (seekBarType == SeekBarType.UNTIL_YEAR) {
-                    sharedViewModel.currentUserRequest.untilYear =
-                        progressChangedValue
-                }
+                    viewModel.userRequest.untilYear = result_year_until.text.toString().toInt()
 
-                Toast.makeText(context, sharedViewModel.currentUserRequest.toString(),
-                               Toast.LENGTH_SHORT).show()
+                }
+//
+//                Toast.makeText(context, viewModel.userRequest.toString(),
+//                               Toast.LENGTH_SHORT).show()
 
             }
         })
@@ -134,8 +116,6 @@ class SettingsFragment : Fragment() {
         fun newInstance() = SettingsFragment()
     }
 
-    enum class SeekBarType {
-        DELIVERY, FROM_YEAR, UNTIL_YEAR
-    }
+
 
 }

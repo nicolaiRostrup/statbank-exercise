@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -11,30 +12,30 @@ import androidx.lifecycle.ViewModelProvider
 import com.anychart.AnyChart
 import com.anychart.chart.common.dataentry.DataEntry
 import com.anychart.chart.common.dataentry.ValueDataEntry
+import com.anychart.core.SeparateChart
 import gov.ufst.statbank_exercise.R
-import gov.ufst.statbank_exercise.SharedViewModel
+import gov.ufst.statbank_exercise.data.model.Repository
 import gov.ufst.statbank_exercise.data.model.TwinData
 import gov.ufst.statbank_exercise.databinding.ChartFragmentBinding
+import gov.ufst.statbank_exercise.ui.helpers.ChartType
 import kotlinx.android.synthetic.main.chart_fragment.*
 import kotlinx.android.synthetic.main.chart_fragment.view.*
+import org.koin.android.viewmodel.compat.ViewModelCompat.getViewModel
+import org.koin.android.viewmodel.ext.android.getViewModel
 
 
 class ChartFragment(private val chartType: ChartType) : Fragment() {
 
     private lateinit var binding: ChartFragmentBinding
     private lateinit var viewModel: ChartViewModel
-    private lateinit var sharedViewModel: SharedViewModel
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
 
-        binding =
-            DataBindingUtil.inflate(inflater, R.layout.chart_fragment, container, false)
+        binding = DataBindingUtil.inflate(
+            inflater, R.layout.chart_fragment, container, false)
         binding.lifecycleOwner = this
-
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,97 +53,83 @@ class ChartFragment(private val chartType: ChartType) : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ChartViewModel::class.java)
+
+        viewModel = getViewModel()
+        viewModel.chosenChartType = chartType
         binding.viewModel = viewModel
 
-        activity?.let {
-            sharedViewModel = ViewModelProvider(it).get(SharedViewModel::class.java)
-        }
-
-        viewModel.serverDataReady.observe(viewLifecycleOwner, Observer { event ->
+        viewModel.chartReady.observe(viewLifecycleOwner, Observer { event ->
             event?.getContentIfNotHandledOrReturnNull()?.let {
-                createChart(prepareData(it), chartType)
+                createChart(it)
 
             }
         })
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.getData(sharedViewModel.currentUserRequest)
-
-    }
-
-    private fun prepareData(twinData: TwinData): List<ServerDataObject>{
-        val thisLabelMap = twinData.dataset.dimension.tid.category.indexList
-        val reversedLabelMap = thisLabelMap.entries.associateBy({ it.value }) { it.key }
-
-        var serverDataList: MutableList<ServerDataObject> = ArrayList()
-
-        for ((index, value) in twinData.dataset.value.withIndex()) {
-            val year = reversedLabelMap[index]
-            year?.let {
-                serverDataList.add(ServerDataObject(year = year, value = value))
-            }
-
-        }
-        if (chartType == ChartType.PIE) {
-            serverDataList = reduceDataList(serverDataList)
-        }
-        return serverDataList
-
-    }
-
-    private fun reduceDataList(dataList: MutableList<ServerDataObject>): MutableList<ServerDataObject> {
-        val reduceFactor: Int = when (dataList.size) {
-            in 1..10 -> 2
-            in 11..50 -> 4
-            in 51..100 -> 12
-            in 101..200 -> 25
-            else -> 1
-        }
-        val resultList: MutableList<ServerDataObject> = ArrayList()
-
-        for (item in dataList.withIndex()) {
-            if (item.index % reduceFactor == 0) {
-                resultList.add(item.value)
-            }
-        }
-        return resultList
-
-    }
-
-    private fun createChart(serverDataList: List<ServerDataObject>, chartType: ChartType) {
-        val finalDataList: MutableList<DataEntry> = ArrayList()
-
-        for (item in serverDataList.withIndex()) {
-                finalDataList.add(ValueDataEntry(serverDataList[item.index].year,
-                                                 serverDataList[item.index].value))
-        }
-
-        val chart = when (chartType) {
-            ChartType.PIE -> {
-                AnyChart.pie().apply {
-                    this.data(finalDataList)
-                }
-            }
-            ChartType.LINE -> {
-                AnyChart.line().apply {
-                    this.data(finalDataList)
-                }
-            }
-            ChartType.MEKKO -> {
-                AnyChart.mekko().apply {
-                    this.data(finalDataList)
-                }
-            }
-
-        }
-
+    private fun createChart(chart: SeparateChart) {
         val chartView = binding.root.chart_view
         chartView.setChart(chart)
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+//        Toast.makeText(context, viewModel.repository.lastUpdate,
+//                               Toast.LENGTH_SHORT).show()
+
+        if (viewModel.repository.lastUpdate == null) viewModel.getData()
+        else viewModel.executeUserRequest()
+
+    }
+
+
+//    private fun prepareMekkoChart(dataList: MutableList<ServerDataObject>): MutableList<ServerDataObject> {
+//        val data: MutableList<DataEntry> = ArrayList()
+//        data.add(new open fun CustomDataEntry())
+//        data.add(new open fun CustomDataEntry())
+//        data.add(new open fun CustomDataEntry())
+//        data.add(new open fun CustomDataEntry())
+//
+//        val set: Set = Set.instantiate()
+//        set.data(data)
+//        val series1Data: Mapping = set.mapAs("{ x: 'x', value: 'value' }")
+//        val series2Data: Mapping = set.mapAs("{ x: 'x', value: 'value2' }")
+//        val series3Data: Mapping = set.mapAs("{ x: 'x', value: 'value3' }")
+//        val series4Data: Mapping = set.mapAs("{ x: 'x', value: 'value4' }")
+//
+//        mekkoChart.mekko(series1Data)
+//            .open  fun name()
+//
+//        mekkoChart.mekko(series2Data)
+//            .open  fun name()
+//
+//        mekkoChart.mekko(series3Data)
+//            .open  fun name()
+//
+//        mekkoChart.mekko(series4Data)
+//            .open  fun name()
+//
+//        mekkoChart.xAxis(0).open  fun orientation()
+//
+//        mekkoChart.labels().open  fun format()
+//
+//        mekkoChart.tooltip().open  fun format()
+//
+//    }
+
+    private class CustomDataEntry internal constructor(x: String?,
+                                                       value: Number?,
+                                                       value2: Number?,
+                                                       value3: Number?,
+                                                       value4: Number?) :
+        ValueDataEntry(x, value) {
+        init {
+            setValue("value2", value2)
+            setValue("value3", value3)
+            setValue("value4", value4)
+        }
     }
 
 
@@ -151,12 +138,6 @@ class ChartFragment(private val chartType: ChartType) : Fragment() {
     }
 
 
-    enum class ChartType {
-        LINE, PIE, MEKKO
-    }
 }
 
-data class ServerDataObject(
-    val year: String,
-    val value: Int
-)
+

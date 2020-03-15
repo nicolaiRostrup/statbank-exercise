@@ -6,16 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import gov.ufst.statbank_exercise.R
-import gov.ufst.statbank_exercise.SharedViewModel
 import gov.ufst.statbank_exercise.databinding.NavigationFragmentBinding
+import gov.ufst.statbank_exercise.ui.helpers.ChartType
+import gov.ufst.statbank_exercise.ui.helpers.UserRequest
 import kotlinx.android.synthetic.main.navigation_fragment.*
+import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.getViewModel
+
 
 class NavigationFragment : Fragment() {
 
     private lateinit var binding: NavigationFragmentBinding
-    private lateinit var sharedViewModel: SharedViewModel
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -30,45 +32,43 @@ class NavigationFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        activity?.let {
-            sharedViewModel = ViewModelProvider(it).get(SharedViewModel::class.java)
-        }
-
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val settingsViewModel = getViewModel<SettingsViewModel>()
 
         pie_chart_button.setOnClickListener {
+
+            //settingsViewModel.saveValues()
             activity?.let {
                 it.supportFragmentManager.beginTransaction()
                     .replace(R.id.container,
-                             ChartFragment.newInstance(ChartFragment.ChartType.PIE))
+                             ChartFragment.newInstance(ChartType.PIE))
                     .commitNow()
             }
 
         }
 
         line_chart_button.setOnClickListener {
+
+           // settingsViewModel.saveValues()
             activity?.let {
                 it.supportFragmentManager.beginTransaction()
                     .replace(R.id.container,
-                             ChartFragment.newInstance(ChartFragment.ChartType.LINE))
+                             ChartFragment.newInstance(ChartType.LINE))
                     .commitNow()
             }
 
         }
 
         mekko_chart_button.setOnClickListener {
+
+            //settingsViewModel.saveValues()
             activity?.let {
                 it.supportFragmentManager.beginTransaction()
                     .replace(R.id.container,
-                             ChartFragment.newInstance(ChartFragment.ChartType.MEKKO))
+                             ChartFragment.newInstance(ChartType.MEKKO))
                     .commitNow()
             }
 
         }
-
     }
 
     companion object {
