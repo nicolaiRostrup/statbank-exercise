@@ -93,7 +93,7 @@ class SettingsFragment : Fragment() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 if (seekBarType == SeekBarType.DELIVERY) {
-                    viewModel.userRequest.deliveryType = result_birthtype.text.toString().toInt().toDeliveryType()
+                    viewModel.userRequest.deliveryType = (result_birthtype.text.toString().toInt() - 1).toDeliveryType()
                 }
                 if (seekBarType == SeekBarType.FROM_YEAR) {
                     viewModel.userRequest.fromYear = result_year_from.text.toString().toInt()
@@ -104,8 +104,8 @@ class SettingsFragment : Fragment() {
 
                 }
 //
-//                Toast.makeText(context, viewModel.userRequest.toString(),
-//                               Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, viewModel.userRequest.toString(),
+                               Toast.LENGTH_SHORT).show()
 
             }
         })

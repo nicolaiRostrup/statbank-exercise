@@ -76,62 +76,10 @@ class ChartFragment(private val chartType: ChartType) : Fragment() {
     override fun onStart() {
         super.onStart()
 
-//        Toast.makeText(context, viewModel.repository.lastUpdate,
-//                               Toast.LENGTH_SHORT).show()
-
         if (viewModel.repository.lastUpdate == null) viewModel.getData()
         else viewModel.executeUserRequest()
 
     }
-
-
-//    private fun prepareMekkoChart(dataList: MutableList<ServerDataObject>): MutableList<ServerDataObject> {
-//        val data: MutableList<DataEntry> = ArrayList()
-//        data.add(new open fun CustomDataEntry())
-//        data.add(new open fun CustomDataEntry())
-//        data.add(new open fun CustomDataEntry())
-//        data.add(new open fun CustomDataEntry())
-//
-//        val set: Set = Set.instantiate()
-//        set.data(data)
-//        val series1Data: Mapping = set.mapAs("{ x: 'x', value: 'value' }")
-//        val series2Data: Mapping = set.mapAs("{ x: 'x', value: 'value2' }")
-//        val series3Data: Mapping = set.mapAs("{ x: 'x', value: 'value3' }")
-//        val series4Data: Mapping = set.mapAs("{ x: 'x', value: 'value4' }")
-//
-//        mekkoChart.mekko(series1Data)
-//            .open  fun name()
-//
-//        mekkoChart.mekko(series2Data)
-//            .open  fun name()
-//
-//        mekkoChart.mekko(series3Data)
-//            .open  fun name()
-//
-//        mekkoChart.mekko(series4Data)
-//            .open  fun name()
-//
-//        mekkoChart.xAxis(0).open  fun orientation()
-//
-//        mekkoChart.labels().open  fun format()
-//
-//        mekkoChart.tooltip().open  fun format()
-//
-//    }
-
-    private class CustomDataEntry internal constructor(x: String?,
-                                                       value: Number?,
-                                                       value2: Number?,
-                                                       value3: Number?,
-                                                       value4: Number?) :
-        ValueDataEntry(x, value) {
-        init {
-            setValue("value2", value2)
-            setValue("value3", value3)
-            setValue("value4", value4)
-        }
-    }
-
 
     companion object {
         fun newInstance(chartType: ChartType) = ChartFragment(chartType)

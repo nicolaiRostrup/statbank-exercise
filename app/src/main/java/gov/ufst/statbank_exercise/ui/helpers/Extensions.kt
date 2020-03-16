@@ -12,7 +12,7 @@ fun Int.toDeliveryType(): DeliveryType {
         2 -> DeliveryType.TRIPLET
         3 -> DeliveryType.QUADRUPLET
 
-        else -> throw Exception("Delivery type unknown")
+        else -> throw Exception("Delivery type unknown: $this")
     }
 
 }
