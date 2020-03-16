@@ -19,7 +19,7 @@ data class Variable(
 )
 
 //Incoming
-data class TwinData(
+data class DeliveryData(
     @SerializedName("dataset") val dataset: DataSet
 )
 
@@ -27,18 +27,6 @@ data class DataSet(
     //@SerializedName("dimension") val dimension: Dimension,
     @SerializedName("value") val value: List<Int>
 )
-
-//data class Dimension(
-//    @SerializedName("Tid") val tid: Tid
-//)
-//
-//data class Tid(
-//    @SerializedName("category") val category: Category
-//)
-//
-//data class Category(
-//    @SerializedName("index") val indexList: Map<String, Int>
-//)
 
 
 

@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <data>
-
   </data>
 
   <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,17 +35,15 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/mekko_chart_button"
+        android:id="@+id/settings_button"
         android:layout_width="95dp"
         android:layout_height="40dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="20dp"
-        android:text="mekko chart"
+        android:text="settings"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
-
 
 
   </androidx.constraintlayout.widget.ConstraintLayout>

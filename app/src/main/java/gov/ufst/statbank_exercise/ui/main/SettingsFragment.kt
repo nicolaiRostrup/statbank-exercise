@@ -5,15 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import gov.ufst.statbank_exercise.R
 import gov.ufst.statbank_exercise.databinding.SettingsFragmentBinding
 import gov.ufst.statbank_exercise.ui.helpers.*
-import kotlinx.android.synthetic.main.settings_fragment.view.*
 import org.koin.android.viewmodel.ext.android.getViewModel
 import kotlinx.android.synthetic.main.settings_fragment.*
+
 
 
 class SettingsFragment : Fragment() {
@@ -103,10 +102,6 @@ class SettingsFragment : Fragment() {
                     viewModel.userRequest.untilYear = result_year_until.text.toString().toInt()
 
                 }
-//
-                Toast.makeText(context, viewModel.userRequest.toString(),
-                               Toast.LENGTH_SHORT).show()
-
             }
         })
 
@@ -115,7 +110,5 @@ class SettingsFragment : Fragment() {
     companion object {
         fun newInstance() = SettingsFragment()
     }
-
-
 
 }

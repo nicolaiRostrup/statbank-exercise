@@ -1,6 +1,5 @@
 package gov.ufst.statbank_exercise
 
-
 import android.app.Application
 import gov.ufst.statbank_exercise.data.model.Repository
 import gov.ufst.statbank_exercise.ui.helpers.UserRequest
@@ -24,7 +23,6 @@ class StatBank : Application() {
             viewModel { ChartViewModel(userRequest = userRequest, repository = repository) }
             single { Repository() }
             single { UserRequest() }
-            //single { UserRequest(get()) }
 
         }
         // Initialize Dependency Injection.

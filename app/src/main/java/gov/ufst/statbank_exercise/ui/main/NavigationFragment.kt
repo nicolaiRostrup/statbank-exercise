@@ -9,10 +9,7 @@ import androidx.fragment.app.Fragment
 import gov.ufst.statbank_exercise.R
 import gov.ufst.statbank_exercise.databinding.NavigationFragmentBinding
 import gov.ufst.statbank_exercise.ui.helpers.ChartType
-import gov.ufst.statbank_exercise.ui.helpers.UserRequest
 import kotlinx.android.synthetic.main.navigation_fragment.*
-import org.koin.android.ext.android.inject
-import org.koin.android.viewmodel.ext.android.getViewModel
 
 
 class NavigationFragment : Fragment() {
@@ -32,11 +29,7 @@ class NavigationFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val settingsViewModel = getViewModel<SettingsViewModel>()
-
         pie_chart_button.setOnClickListener {
-
-            //settingsViewModel.saveValues()
             activity?.let {
                 it.supportFragmentManager.beginTransaction()
                     .replace(R.id.container,
@@ -47,8 +40,6 @@ class NavigationFragment : Fragment() {
         }
 
         line_chart_button.setOnClickListener {
-
-           // settingsViewModel.saveValues()
             activity?.let {
                 it.supportFragmentManager.beginTransaction()
                     .replace(R.id.container,
@@ -58,17 +49,14 @@ class NavigationFragment : Fragment() {
 
         }
 
-        mekko_chart_button.setOnClickListener {
-
-            //settingsViewModel.saveValues()
+        settings_button.setOnClickListener {
             activity?.let {
                 it.supportFragmentManager.beginTransaction()
-                    .replace(R.id.container,
-                             ChartFragment.newInstance(ChartType.MEKKO))
+                    .replace(R.id.container, SettingsFragment.newInstance())
                     .commitNow()
             }
-
         }
+
     }
 
     companion object {

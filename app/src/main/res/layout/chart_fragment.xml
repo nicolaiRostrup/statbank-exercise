@@ -16,17 +16,6 @@
       android:layout_height="match_parent"
       tools:context=".ui.main.ChartFragment">
 
-    <Button
-        android:id="@+id/settings_button"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginEnd="35dp"
-        android:layout_marginTop="35dp"
-        android:text="settings"
-        android:textSize="10sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <com.anychart.AnyChartView
         android:id="@+id/chart_view"
         android:layout_width="match_parent"

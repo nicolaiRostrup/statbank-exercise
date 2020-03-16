@@ -2,7 +2,7 @@ package gov.ufst.statbank_exercise.ui.helpers
 
 
 enum class ChartType {
-    LINE, PIE, MEKKO
+    LINE, PIE
 }
 
 enum class SeekBarType {

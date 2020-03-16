@@ -1,7 +1,6 @@
 package gov.ufst.statbank_exercise.ui.main
 
 
-import android.util.Log
 import androidx.databinding.Observable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,12 +8,8 @@ import com.anychart.AnyChart
 import com.anychart.chart.common.dataentry.DataEntry
 import com.anychart.chart.common.dataentry.ValueDataEntry
 import com.anychart.charts.Cartesian
-import com.anychart.charts.Mekko
 import com.anychart.charts.Pie
 import com.anychart.core.SeparateChart
-import com.anychart.data.Mapping
-import com.anychart.data.Set
-import com.anychart.enums.Orientation
 import gov.ufst.statbank_exercise.data.model.*
 import gov.ufst.statbank_exercise.ui.helpers.*
 import retrofit2.Call
@@ -40,38 +35,32 @@ class ChartViewModel(
     fun getData() {
         fetchingData.value = true
 
-        client.getTwinData(manufactureTwinDataRequest()).enqueue(object : Callback<TwinData> {
-            override fun onResponse(call: Call<TwinData>, response: Response<TwinData>) {
+        client.getBirthDeliveryData(manufactureDataRequest()).enqueue(object : Callback<DeliveryData> {
+            override fun onResponse(call: Call<DeliveryData>, response: Response<DeliveryData>) {
                 if (response.isSuccessful) {
-                    Log.i("server response: ", " successful ${response.body()}")
                     fetchingData.value = false
-
                     response.body()?.let {
                         parseDeliveryData(it)
                         executeUserRequest()
                     }
 
                 } else {
-                    Log.i("server response: ", " unsuccessful ${response.body()}")
                     fetchingData.value = false
                 }
             }
 
-            override fun onFailure(call: Call<TwinData>, t: Throwable) {
+            override fun onFailure(call: Call<DeliveryData>, t: Throwable) {
                 t.printStackTrace()
                 fetchingData.value = false
-                Log.e("server request error", "")
             }
         })
 
     }
 
     fun executeUserRequest() {
-        //var chartDataEntries: MutableList<DataEntry> = ArrayList()
         val thisChart: SeparateChart = when (chosenChartType) {
             ChartType.PIE -> preparePieChart(userRequest)
             ChartType.LINE -> prepareLineChart(userRequest)
-            ChartType.MEKKO -> prepareMekkoChart(userRequest)
         }
         chartReady.postValue(Event(thisChart))
     }
@@ -112,65 +101,7 @@ class ChartViewModel(
         return lineChart
     }
 
-    private fun prepareMekkoChart(userRequest: UserRequest): Cartesian {
-       val chartCreator = MultipleLineChart()
-        return chartCreator.CreateMultipleLineChart(manufactureMekkoData(userRequest))
-    }
-
-    private fun manufactureMekkoData(userRequest: UserRequest): List<MutableDataEntry>{
-        val dataList: MutableList<ServerDataObject> = mutableListOf()
-        repository.allDeliveryData.forEach {
-            if ((it.year.toInt() in (userRequest.fromYear..userRequest.untilYear))) {
-                dataList.add(it)
-            }
-        }
-
-//        val reduceFactor: Int = (ceil(dataList.size.toDouble() / 5.0)).toInt()
-//        val reducedDataList: List<ServerDataObject> = if (dataList.size > 5) {
-//            dataList.filterIndexed { index, _ -> index % reduceFactor == 0 }
-//        } else dataList
-
-        val resultList: MutableList<MutableDataEntry> = mutableListOf()
-        dataList.sortedBy { it.year }
-
-        dataList.forEach {
-            val entry = MutableDataEntry()
-            entry.year = it.year
-            when (it.deliveryType) {
-                DeliveryType.SINGLE -> entry.singleCount = it.count
-                DeliveryType.TWIN -> entry.twinCount = it.count
-                DeliveryType.TRIPLET -> entry.tripletCount = it.count
-                DeliveryType.QUADRUPLET -> entry.quadCount = it.count
-            }
-            resultList.add(entry)
-            Log.i("StatBank", "entry list: " + entry.toString())
-        }
-
-        val furtherResultList: MutableList<MutableDataEntry> = mutableListOf()
-        var targetYear = 0
-
-        for (item in resultList) {
-            if (item.year.toInt() != targetYear) {
-                val entry = MutableDataEntry()
-                entry.year = item.year
-                furtherResultList.add(entry)
-                targetYear = item.year.toInt()
-            }
-        }
-        Log.i("StatBank", "further entry list: " + furtherResultList.size)
-
-        for (item in resultList) {
-            val otherItem = furtherResultList.find { it.year == item.year }
-            if (otherItem?.singleCount == 0) otherItem.singleCount = item.singleCount
-            if (otherItem?.twinCount == 0) otherItem.twinCount = item.twinCount
-            if (otherItem?.tripletCount == 0) otherItem.tripletCount = item.tripletCount
-            if (otherItem?.quadCount == 0) otherItem.quadCount = item.quadCount
-        }
-        return furtherResultList
-    }
-
-    private fun manufactureTwinDataRequest(): DataRequest {
-
+    private fun manufactureDataRequest(): DataRequest {
         val yearList: MutableList<String> = mutableListOf()
 
         for (year in 1850..2018) {
@@ -190,17 +121,17 @@ class ChartViewModel(
         return dataRequest
     }
 
-    private fun parseDeliveryData(twinData: TwinData) {
+    private fun parseDeliveryData(deliveryData: DeliveryData) {
 
-        val twinValueList = twinData.dataset.value as MutableList
+        val fetchedValueList = deliveryData.dataset.value as MutableList
         //Delivery count list size is always divisible by four, since it is derived from a (4 * numbers of years) calculation
-        if (twinValueList.size % 4 != 0) throw Exception("List of delivery types should allways be divisible by 4")
-        val yearRange = twinValueList.size / 4
+        if (fetchedValueList.size % 4 != 0) throw Exception("List of delivery types should allways be divisible by 4")
+        val yearRange = fetchedValueList.size / 4
 
-        val singleDeliveries: List<Int> = twinValueList.take(yearRange)
-        val twinDeliveries: List<Int> = twinValueList.drop(yearRange).take(yearRange)
-        val tripletDeliveries: List<Int> = twinValueList.drop(yearRange * 2).take(yearRange)
-        val quadDeliveries: List<Int> = twinValueList.drop(yearRange * 3).take(yearRange)
+        val singleDeliveries: List<Int> = fetchedValueList.take(yearRange)
+        val twinDeliveries: List<Int> = fetchedValueList.drop(yearRange).take(yearRange)
+        val tripletDeliveries: List<Int> = fetchedValueList.drop(yearRange * 2).take(yearRange)
+        val quadDeliveries: List<Int> = fetchedValueList.drop(yearRange * 3).take(yearRange)
 
         val resultList: MutableList<ServerDataObject> = mutableListOf()
 
@@ -232,17 +163,5 @@ class ChartViewModel(
 
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
 
-    }
-}
-
-class MutableDataEntry() {
-    var year = ""
-    var singleCount = 0
-    var twinCount = 0
-    var tripletCount = 0
-    var quadCount = 0
-
-    override fun toString(): String {
-        return "$year  $singleCount $twinCount $tripletCount $quadCount"
     }
 }
