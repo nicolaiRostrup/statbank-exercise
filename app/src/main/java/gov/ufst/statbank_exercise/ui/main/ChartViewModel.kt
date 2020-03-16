@@ -20,8 +20,7 @@ import kotlin.math.ceil
 
 class ChartViewModel(
     val repository: Repository,
-    val userRequest: UserRequest) : ViewModel(), Observable {
-
+    private val userRequest: UserRequest) : ViewModel(), Observable {
 
     private var client: ApiCalls = RetrofitClient.create()
 

@@ -7,11 +7,15 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.anychart.core.SeparateChart
+import gov.ufst.statbank_exercise.MainActivity
 import gov.ufst.statbank_exercise.R
 import gov.ufst.statbank_exercise.databinding.ChartFragmentBinding
 import gov.ufst.statbank_exercise.ui.helpers.ChartType
+import gov.ufst.statbank_exercise.ui.helpers.Event
 import kotlinx.android.synthetic.main.chart_fragment.view.*
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.getViewModel
 
 

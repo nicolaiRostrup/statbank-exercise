@@ -4,7 +4,6 @@ import android.app.Application
 import gov.ufst.statbank_exercise.data.model.Repository
 import gov.ufst.statbank_exercise.ui.helpers.UserRequest
 import gov.ufst.statbank_exercise.ui.main.ChartViewModel
-import gov.ufst.statbank_exercise.ui.main.SettingsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -18,11 +17,10 @@ class StatBank : Application() {
         val userRequest = UserRequest()
         val repository = Repository()
 
+
         val mainModule = module {
-            viewModel { SettingsViewModel(userRequest) }
-            viewModel { ChartViewModel(userRequest = userRequest, repository = repository) }
-            single { Repository() }
-            single { UserRequest() }
+            viewModel { ChartViewModel(repository, userRequest) }
+            single{ userRequest }
 
         }
         // Initialize Dependency Injection.

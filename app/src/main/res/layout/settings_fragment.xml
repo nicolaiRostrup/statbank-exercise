@@ -4,10 +4,6 @@
 
   <data>
 
-    <variable
-        name="viewModel"
-        type="gov.ufst.statbank_exercise.ui.main.SettingsViewModel" />
-
   </data>
 
   <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"

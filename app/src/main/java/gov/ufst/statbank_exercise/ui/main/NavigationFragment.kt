@@ -1,8 +1,12 @@
 package gov.ufst.statbank_exercise.ui.main
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -16,7 +20,6 @@ class NavigationFragment : Fragment() {
 
     private lateinit var binding: NavigationFragmentBinding
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
 
@@ -26,10 +29,14 @@ class NavigationFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         pie_chart_button.setOnClickListener {
+            settings_button.isClickable = true
+            settings_button.setTextColor(Color.BLACK)
+
             activity?.let {
                 it.supportFragmentManager.beginTransaction()
                     .replace(R.id.container,
@@ -40,6 +47,9 @@ class NavigationFragment : Fragment() {
         }
 
         line_chart_button.setOnClickListener {
+            settings_button.isClickable = true
+            settings_button.setTextColor(Color.BLACK)
+
             activity?.let {
                 it.supportFragmentManager.beginTransaction()
                     .replace(R.id.container,
@@ -50,6 +60,9 @@ class NavigationFragment : Fragment() {
         }
 
         settings_button.setOnClickListener {
+            settings_button.isClickable = false
+            settings_button.setTextColor(R.color.grey)
+
             activity?.let {
                 it.supportFragmentManager.beginTransaction()
                     .replace(R.id.container, SettingsFragment.newInstance())
@@ -57,6 +70,8 @@ class NavigationFragment : Fragment() {
             }
         }
 
+        settings_button.isClickable = false
+        settings_button.setTextColor(R.color.grey)
     }
 
     companion object {

@@ -1,10 +1,9 @@
 package gov.ufst.statbank_exercise.ui.helpers
 
 import android.view.View
-import android.widget.SeekBar
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.ViewModel
-import gov.ufst.statbank_exercise.ui.main.SettingsViewModel
+
+//import gov.ufst.statbank_exercise.ui.main.SettingsViewModel
 
 @BindingAdapter("visibleIf")
 fun changeVisibility(view: View, visible: Boolean) {

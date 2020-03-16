@@ -10,15 +10,15 @@ import androidx.fragment.app.Fragment
 import gov.ufst.statbank_exercise.R
 import gov.ufst.statbank_exercise.databinding.SettingsFragmentBinding
 import gov.ufst.statbank_exercise.ui.helpers.*
-import org.koin.android.viewmodel.ext.android.getViewModel
 import kotlinx.android.synthetic.main.settings_fragment.*
-
+import org.koin.android.ext.android.inject
 
 
 class SettingsFragment : Fragment() {
 
     private lateinit var binding: SettingsFragmentBinding
-    private lateinit var viewModel: SettingsViewModel
+
+    private val userRequest: UserRequest by inject()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -30,17 +30,9 @@ class SettingsFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = getViewModel()
-        binding.viewModel = viewModel
-
-    }
-
     override fun onStart() {
         super.onStart()
 
-        val userRequest = viewModel.userRequest
         seekbar_birthtype.progress = userRequest.deliveryType.toInt()
         seekbar_year_from.progress = userRequest.fromYear - DefaultSettings.minimumYear
         seekbar_year_until.progress = userRequest.untilYear - DefaultSettings.minimumYear
@@ -63,7 +55,6 @@ class SettingsFragment : Fragment() {
                 progressChangedValue = progress
 
                 if (seekBarType == SeekBarType.DELIVERY) {
-                    //result_birthtype.text = progressChangedValue.toString()
                     result_birthtype.text = (progressChangedValue.toString().toInt() + 1).toString()
                 }
                 if (seekBarType == SeekBarType.FROM_YEAR) {
@@ -92,14 +83,14 @@ class SettingsFragment : Fragment() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 if (seekBarType == SeekBarType.DELIVERY) {
-                    viewModel.userRequest.deliveryType = (result_birthtype.text.toString().toInt() - 1).toDeliveryType()
+                    userRequest.deliveryType = (result_birthtype.text.toString().toInt() - 1).toDeliveryType()
                 }
                 if (seekBarType == SeekBarType.FROM_YEAR) {
-                    viewModel.userRequest.fromYear = result_year_from.text.toString().toInt()
+                    userRequest.fromYear = result_year_from.text.toString().toInt()
 
                 }
                 if (seekBarType == SeekBarType.UNTIL_YEAR) {
-                    viewModel.userRequest.untilYear = result_year_until.text.toString().toInt()
+                    userRequest.untilYear = result_year_until.text.toString().toInt()
 
                 }
             }
