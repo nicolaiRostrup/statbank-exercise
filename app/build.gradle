@@ -1,11 +1,7 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
-
 apply plugin: 'kotlin-kapt'
-
 
 android {
     compileSdkVersion 29
@@ -39,9 +35,6 @@ android {
 
 }
 
-
-
-
 dependencies {
     //Default
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -65,8 +58,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:4.4.0"
     implementation "com.squareup.okhttp3:mockwebserver:4.4.0"
 
-    //Dependency Injection
-    //Koin
+    //Dependency Injection, Koin
     implementation "org.koin:koin-android:2.1.4"
     implementation "org.koin:koin-android-ext:2.1.4"
     implementation "org.koin:koin-android-viewmodel:2.1.4"

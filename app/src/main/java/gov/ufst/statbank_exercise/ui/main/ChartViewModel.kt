@@ -26,6 +26,7 @@ class ChartViewModel(
 
     lateinit var chosenChartType: ChartType
 
+    //For information on this type of wrapping mutable live data content in Event class, please see Event class.
     val chartReady = MutableLiveData<Event<SeparateChart>>()
 
     val fetchingData = MutableLiveData<Boolean>()

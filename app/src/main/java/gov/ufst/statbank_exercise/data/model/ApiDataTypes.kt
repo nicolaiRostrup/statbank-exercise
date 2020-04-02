@@ -24,7 +24,6 @@ data class DeliveryData(
 )
 
 data class DataSet(
-    //@SerializedName("dimension") val dimension: Dimension,
     @SerializedName("value") val value: List<Int>
 )
 
